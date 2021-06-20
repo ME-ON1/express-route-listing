@@ -25,17 +25,16 @@ const METHODS = {
 
 
 
-function AccquireRoute(app, options )
+function AccquireRoute(app  , options )
 {
 	const {stack} = app._router ;
-	//console.log(stack , stack[9].route.stack) ;
+	console.log(stack , stack[9].route.stack) ;
 	let r_routeInfoList = [] ;
 
 
 
 	for(val of stack )
 	{
-
 		let r_LogObj = {}
 		if(!isUndefined(val, 'name') && val.name == 'bound dispatch')
 		{
@@ -56,7 +55,6 @@ function AccquireRoute(app, options )
 			{
 				routeParamHdl(val.keys, r_LogObj) ;
 			}
-
 			if(!isUndefined(val , 'regexp'))
 			{
 				routeRegexpHdl(val.regexp, r_LogObj) ;
@@ -70,16 +68,21 @@ function AccquireRoute(app, options )
 
 function routeParamHdl(r_paramsObj, r_LogObj)
 {
-	const r_paramsList = [] ;
-
-	for(r_paramVal of r_paramsObj )
+	if( r_paramsObj.length === 0 )
 	{
-		let r_param = {} ;
-		r_param.name = r_paramVal.name
-		r_paramsList.push(r_param) ;
-	}
+		return ;
+	}else {
+		let r_paramsList = [] ;
+		for(r_paramVal of r_paramsObj )
+		{
+			let r_param = {} ;
+			r_param.name = r_paramVal.name
+			r_paramsList.push(r_param) ;
+		}
 
-	r_LogObj.params = r_paramsList ;
+		r_LogObj.params = r_paramsList ;
+
+	}
 }
 
 function routePathHdl(r_routeObj , r_LogObj)
@@ -91,16 +94,13 @@ function routePathHdl(r_routeObj , r_LogObj)
 function routeMethodHdl(r_Route, r_routeInfoObj)
 {
 	const ar = Object.keys(r_Route.methods)
-
 	r_routeInfoObj.methods = ar[0].toUpperCase();
-
 	return ;
 }
 
 function routeMiddlewareHdl(r_mwObj , r_LogObj)
 {
 	let r_mwList = []
-
 	for(r_mwVal of r_mwObj)
 	{
 		let l_mwObj = {}
@@ -116,9 +116,8 @@ function routeMiddlewareHdl(r_mwObj , r_LogObj)
 
 function routeRegexpHdl(r_regexpObj , r_LogObj)
 {
-	//\ccconsole.log(r_regexpObj)
 	r_LogObj.regexp = r_regexpObj
-
+	return ;
 }
 
 function isUndefined(objectCheck, checkProperty )
@@ -128,7 +127,6 @@ function isUndefined(objectCheck, checkProperty )
 		return true ;
 	}
 }
-
 
 
 AccquireRoute(app) ;
