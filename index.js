@@ -1,8 +1,6 @@
-const app = new  require("../testDoc/app");
+//const app = new  require("../testDoc/app");
 const fs = require("fs") ;
 const {log} = require("util");
-
-const GlobalRoutes = [] ;
 
 /*
  * OPTIONS - params
@@ -25,14 +23,13 @@ const METHODS = {
 
 
 
-function AccquireRoute(app  , options )
-{
+exports.AccquireRoute = (app  , options ) => {
+	const {
+		writeToFile ,
+		printToConsole ,
+	} = options
 	const {stack} = app._router ;
-	console.log(stack , stack[9].route.stack) ;
 	let r_routeInfoList = [] ;
-
-
-
 	for(val of stack )
 	{
 		let r_LogObj = {}
@@ -46,7 +43,6 @@ function AccquireRoute(app  , options )
 					routeMiddlewareHdl(val.route.stack, r_LogObj) ;
 				}
 			}
-
 			if(!isUndefined(val , 'methods'))
 			{
 				routeMethodHdl(val.route, r_LogObj) ;
@@ -61,7 +57,20 @@ function AccquireRoute(app  , options )
 			}
 
 		}
-		console.log(r_LogObj)
+		if(typeof printToConsole === "boolean" && printToConsole )
+		{
+			console.log(r_LogObj)
+		}else
+		{
+			throw new Error(`printToConsole needs to be Boolean , found to be ${typeof printToConsole} `)
+		}
+		r_routeInfoList.push(r_LogObj)
+	}
+	if(typeof writeToFile === 'boolean' && writeToFile)
+	{
+
+	}else {
+		throw new Error(`writeToFile needs to be boolean, found to be ${typeof writeToFile}` )
 	}
 }
 
@@ -79,7 +88,6 @@ function routeParamHdl(r_paramsObj, r_LogObj)
 			r_param.name = r_paramVal.name
 			r_paramsList.push(r_param) ;
 		}
-
 		r_LogObj.params = r_paramsList ;
 
 	}
@@ -129,4 +137,4 @@ function isUndefined(objectCheck, checkProperty )
 }
 
 
-AccquireRoute(app) ;
+//AccquireRoute(app) ;
