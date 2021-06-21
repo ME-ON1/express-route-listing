@@ -21,14 +21,13 @@ const METHODS = {
 	put 	: 'PUT'
 }
 
-
-
-exports.AccquireRoute = (app  , options ) => {
+exports.AccquireRoute = (app, options   ) => {
 	const {
 		writeToFile ,
 		printToConsole ,
 	} = options
 	const {stack} = app._router ;
+	console.log(JSON.stringify(stack,null ,2  ))
 	let r_routeInfoList = [] ;
 	for(val of stack )
 	{
@@ -43,7 +42,7 @@ exports.AccquireRoute = (app  , options ) => {
 					routeMiddlewareHdl(val.route.stack, r_LogObj) ;
 				}
 			}
-			if(!isUndefined(val , 'methods'))
+			if(!isUndefined(val.route , 'methods'))
 			{
 				routeMethodHdl(val.route, r_LogObj) ;
 			}
@@ -64,14 +63,12 @@ exports.AccquireRoute = (app  , options ) => {
 		{
 			throw new Error(`printToConsole needs to be Boolean , found to be ${typeof printToConsole} `)
 		}
-		r_routeInfoList.push(r_LogObj)
+		if(Object.keys(r_LogObj).length !== 0)
+		{
+			r_routeInfoList.push(r_LogObj)
+		}
 	}
-	if(typeof writeToFile === 'boolean' && writeToFile)
-	{
-
-	}else {
-		throw new Error(`writeToFile needs to be boolean, found to be ${typeof writeToFile}` )
-	}
+	console.log(r_routeInfoList)
 }
 
 
@@ -101,8 +98,12 @@ function routePathHdl(r_routeObj , r_LogObj)
 
 function routeMethodHdl(r_Route, r_routeInfoObj)
 {
-	const ar = Object.keys(r_Route.methods)
-	r_routeInfoObj.methods = ar[0].toUpperCase();
+	let r_routeMethodList = []
+	Object.keys(r_Route.methods).map((val)=>{
+		r_routeMethodList.push(val.toUpperCase())
+	})
+
+	r_routeInfoObj.methods = r_routeMethodList
 	return ;
 }
 
@@ -135,6 +136,3 @@ function isUndefined(objectCheck, checkProperty )
 		return true ;
 	}
 }
-
-
-//AccquireRoute(app) ;
