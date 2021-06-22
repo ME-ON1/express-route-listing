@@ -134,5 +134,8 @@ function isUndefined(objectCheck, checkProperty )
 	if(typeof objectCheck[checkProperty] === 'undefined' )
 	{
 		return true ;
+	}else
+	{
+		return false ;
 	}
 }
