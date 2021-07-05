@@ -18,19 +18,21 @@ const METHODS = {
 	put 	: 'PUT'
 }
 
-const cleanRegEx = (input) => {
-	if(input.fast_slash)
-	{
-		return ''
-	}
-	var out = String(input) || ''
+const replaceTokens = (path, keys) => {
+    return keys.reduce((memo, key) => {
+      return memo.replace('(?:([^\\/]+?))', `:${key.name}`);
+    }, path.toString());
+}
+
+const cleanRegEx = (path, keys) => {
+	var out = String(path) || ''
 	out = out.replace(/\\\//g, '/'); // escaped slashes
 	out = out.replace(/\^\//g, ''); // beginning of route
 	out = out.replace(/(\/\?\(\?\=\/\|\$\)\/\i)/, ''); // stack route end
-			if(out.match(/^\/\?\$\/\i$/)) out = '/';
-			else out = out.replace(/\/\?\$\/\i/, ''); // route end
-			return out;
-		};
+	if(out.match(/^\/\?\$\/\i$/)) out = '/';
+	else out = out.replace(/\/\?\$\/\i/, ''); // route end
+	return out;
+};
 
 
 export const AccquireRoute = (app, options   ) => {
@@ -41,11 +43,12 @@ export const AccquireRoute = (app, options   ) => {
 	const {stack} = app._router ;
 	let r_routeInfoList = [] ;
 	let baseUrl = ""
+
 	for(let val of stack )
 	{
 		if(isUndefined(val, 'router') && (val.name === 'router') )
 		{
-			r_LayerHdl(val , r_routeInfoList , baseUrl + cleanRegEx(val.regexp)) ;
+			r_LayerHdl(val , r_routeInfoList , baseUrl + cleanRegEx(replaceTokens(val.regexp, val.keys))) ;
 		}
 
 	}
@@ -90,7 +93,7 @@ const r_LayerHdl = (r_ILog, r_routeInfoList , baseUrl) => {
 	{
 		for(const stk of r_ILog.handle.stack)
 		{
-			r_LayerHdl(stk , r_routeInfoList, baseUrl +""+ cleanRegEx(stk.regexp))
+			r_LayerHdl(stk , r_routeInfoList, baseUrl +""+ cleanRegEx(replaceTokens(stk.regexp, stk.keys)))
 		}
 	}
 }
@@ -149,7 +152,7 @@ function ar_Hdl(len , itr , r_routeInfoObj, key)
 
 function fileWriteHdl(r_DataWrite)
 {
-	fs.writeFile("./Roe.md", mdTable(r_DataWrite), (Er)=>{
+	fs.writeFile("./Rog.md", mdTable(r_DataWrite), (Er)=>{
 		if(Er )
 		{
 			console.log(Er)
