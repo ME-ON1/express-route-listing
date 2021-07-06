@@ -1,5 +1,6 @@
 import fs from "fs"
 import {markdownTable as mdTable} from "markdown-table"
+import util from 'util'
 /*
  * OPTIONS - params
  * methods
@@ -17,52 +18,47 @@ const METHODS = {
 	put 	: 'PUT'
 }
 
+const replaceTokens = (path, keys) => {
+    return keys.reduce((memo, key) => {
+      return memo.replace('(?:([^\\/]+?))', `:${key.name}`);
+    }, path.toString());
+}
+
+const cleanRegEx = (path, keys) => {
+	var out = String(path) || ''
+	out = out.replace(/\\\//g, '/'); // escaped slashes
+	out = out.replace(/\^\//g, ''); // beginning of route
+	out = out.replace(/(\/\?\(\?\=\/\|\$\)\/\i)/, ''); // stack route end
+	if(out.match(/^\/\?\$\/\i$/)) out = '/';
+	else out = out.replace(/\/\?\$\/\i/, ''); // route end
+	return out;
+};
+
+
 export const AccquireRoute = (app, options   ) => {
 	const {
 		writeToFile ,
 		printToConsole ,
 	} = options
 	const {stack} = app._router ;
-	console.log(JSON.stringify(stack,null ,2  ))
 	let r_routeInfoList = [] ;
+	let baseUrl = ""
+
 	for(let val of stack )
 	{
-		let r_LogObj = {}
-		if(!isUndefined(val, 'name') && val.name == 'bound dispatch')
+		if(isUndefined(val, 'router') && (val.name === 'router') )
 		{
-			if(!isUndefined(val , 'route'))
-			{
-				routePathHdl(val.route, r_LogObj) ;
-				if(!isUndefined(val.route , 'stack'))
-				{
-					routeMiddlewareHdl(val.route.stack, r_LogObj) ;
-				}
-			}
-			if(!isUndefined(val.route , 'methods'))
-			{
-				routeMethodHdl(val.route, r_LogObj) ;
-			}
-			if(!isUndefined(val , 'keys'))
-			{
-				routeParamHdl(val.keys, r_LogObj) ;
-			}
-			if(!isUndefined(val , 'regexp'))
-			{
-				routeRegexpHdl(val.regexp, r_LogObj) ;
-			}
+			r_LayerHdl(val , r_routeInfoList , baseUrl + cleanRegEx(replaceTokens(val.regexp, val.keys))) ;
+		}
 
-		}
-		if(typeof printToConsole === "boolean" && printToConsole )
-		{
-			console.log(r_LogObj)
-		}else
-		{
-			throw new Error(`printToConsole needs to be Boolean , found to be ${typeof printToConsole} `)
-		}
-		if(Object.keys(r_LogObj).length !== 0)
-		{
-			r_routeInfoList.push(r_LogObj)
-		}
+	}
+
+	if(typeof printToConsole === "boolean" && printToConsole )
+	{
+		console.log(util.inspect(r_routeInfoList , {showHidden : false , depth : null }))
+	}else
+	{
+		throw new Error(`printToConsole needs to be Boolean , found to be ${typeof printToConsole} `)
 	}
 	if(typeof writeToFile === "boolean" && writeToFile)
 	{
@@ -71,6 +67,36 @@ export const AccquireRoute = (app, options   ) => {
 	}
 }
 
+const r_LayerHdl = (r_ILog, r_routeInfoList , baseUrl) => {
+	if(r_ILog.name === 'bound dispatch')
+	{
+		let r_LogObj = {};
+		if(!isUndefined(r_ILog , 'route'))
+		{
+			routePathHdl(r_ILog.route, r_LogObj, baseUrl ) ;
+			if(!isUndefined(r_ILog.route , 'stack'))
+			{
+				routeMiddlewareHdl(r_ILog.route.stack, r_LogObj) ;
+			}
+		}
+		if(!isUndefined(r_ILog.route , 'methods'))
+		{
+			routeMethodHdl(r_ILog.route, r_LogObj) ;
+		}
+		if(!isUndefined(r_ILog , 'keys'))
+		{
+			routeParamHdl(r_ILog.keys, r_LogObj) ;
+		}
+		r_routeInfoList.push(r_LogObj)
+	}
+	if(isUndefined(r_ILog, 'route') && r_ILog.name === 'router')
+	{
+		for(const stk of r_ILog.handle.stack)
+		{
+			r_LayerHdl(stk , r_routeInfoList, baseUrl +""+ cleanRegEx(replaceTokens(stk.regexp, stk.keys)))
+		}
+	}
+}
 /**
  * add table heading
  * and make path
@@ -126,7 +152,7 @@ function ar_Hdl(len , itr , r_routeInfoObj, key)
 
 function fileWriteHdl(r_DataWrite)
 {
-	fs.writeFile("./Rob.md", mdTable(r_DataWrite), (Er)=>{
+	fs.writeFile("./Rog.md", mdTable(r_DataWrite), (Er)=>{
 		if(Er )
 		{
 			console.log(Er)
@@ -149,13 +175,13 @@ function routeParamHdl(r_paramsObj, r_LogObj)
 	r_LogObj.params = r_paramsList ;
 }
 
-function routePathHdl(r_routeObj , r_LogObj)
+function routePathHdl(r_routeObj , r_LogObj, baseUrl)
 {
-	r_LogObj.path = r_routeObj.path
-	return ;
+	r_LogObj.path = baseUrl
+	return;
 }
 
-function routeMethodHdl(r_Route, r_routeInfoObj)
+function routeMethodHdl(r_Route, r_routeInfoObj, baseUrl )
 {
 	let r_routeMethodList = []
 	Object.keys(r_Route.methods).map((val)=>{
@@ -166,7 +192,7 @@ function routeMethodHdl(r_Route, r_routeInfoObj)
 	return ;
 }
 
-function routeMiddlewareHdl(r_mwObj , r_LogObj)
+function routeMiddlewareHdl(r_mwObj , r_LogObj, baseUrl)
 {
 	let r_mwList = []
 	for(let r_mwVal of r_mwObj)
@@ -179,12 +205,6 @@ function routeMiddlewareHdl(r_mwObj , r_LogObj)
 		}
 	}
 	r_LogObj.middleware = r_mwList
-	return ;
-}
-
-function routeRegexpHdl(r_regexpObj , r_LogObj)
-{
-	r_LogObj.regexp = r_regexpObj
 	return ;
 }
 
