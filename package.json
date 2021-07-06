@@ -8,5 +8,9 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "type": "module",
+  "license": "ISC",
+  "dependencies": {
+    "markdown-table": "^3.0.1"
+  }
 }
