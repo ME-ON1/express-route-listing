@@ -18,21 +18,36 @@ const METHODS = {
 	put 	: 'PUT'
 }
 
+const QUERY_REGEX = "(?:\/([^\/]+?))"
+const PARAM_REGEX = "(?:([^\\/]+?))"
+
 const replaceTokens = (path, keys) => {
-    return keys.reduce((memo, key) => {
-      return memo.replace('(?:([^\\/]+?))', `:${key.name}`);
-    }, path.toString());
+	console.log(path , "replace tokens ", keys)
+	return keys.reduce((memo, key) => {
+		if(memo.indexOf("(?:([^\\/]+?))") >= 0 )
+		{
+			console.log(memo , "inside parma")
+			return memo.replace( "(?:([^\\/]+?))", `:${key.name}`)
+		}
+		else if(memo.indexOf("(?:\/([^\/]+?)") >= 0  )
+		{
+			console.log(memo, "insider query")
+			return memo.replace( "(?:\/([^\\/]+?))", `:${key.name}`)
+		}
+	}, path.toString());
 }
 
-const cleanRegEx = (path, keys) => {
+const cleanRegEx = (path) => {
+	console.log(path , "in the ro" )
 	var out = String(path) || ''
 	out = out.replace(/\\\//g, '/'); // escaped slashes
-	out = out.replace(/\^\//g, ''); // beginning of route
-	out = out.replace(/(\/\?\(\?\=\/\|\$\)\/\i)/, ''); // stack route end
-	if(out.match(/^\/\?\$\/\i$/)) out = '/';
-	else out = out.replace(/\/\?\$\/\i/, ''); // route end
-	return out;
-};
+		out = out.replace(/\^\//g, ''); // beginning of route
+			out = out.replace(/(\/\?\(\?\=\/\|\$\)\/\i)/, ''); // stack route end
+			if(out.match(/^\/\?\$\/\i$/)) out = '/';
+			else out = out.replace(/\/\?\$\/\i/, ''); // route end
+			console.log("after removing everytghi" , out )
+			return out;
+		};
 
 
 export const AccquireRoute = (app, options   ) => {
@@ -46,7 +61,7 @@ export const AccquireRoute = (app, options   ) => {
 
 	for(let val of stack )
 	{
-		if(isUndefined(val, 'router') && (val.name === 'router') )
+		if(isUndefined(val, 'router') && (val.name === 'router' || val.name === 'bound dispatch') )
 		{
 			r_LayerHdl(val , r_routeInfoList , baseUrl + cleanRegEx(replaceTokens(val.regexp, val.keys))) ;
 		}
@@ -152,7 +167,7 @@ function ar_Hdl(len , itr , r_routeInfoObj, key)
 
 function fileWriteHdl(r_DataWrite)
 {
-	fs.writeFile("./Rog.md", mdTable(r_DataWrite), (Er)=>{
+	fs.writeFile("./Rpg.md", mdTable(r_DataWrite), (Er)=>{
 		if(Er )
 		{
 			console.log(Er)
