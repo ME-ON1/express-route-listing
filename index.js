@@ -18,13 +18,16 @@ const METHODS = {
 	put 	: 'PUT'
 }
 
-const replaceTokens = (path, keys) => {
-    return keys.reduce((memo, key) => {
-      return memo.replace('(?:([^\\/]+?))', `:${key.name}`);
-    }, path.toString());
-}
+const QUERY_REGEX = "(?:\/([^\/]+?))"
+const PARAM_REGEX = "(?:([^\\/]+?))"
 
-const cleanRegEx = (path, keys) => {
+const replaceTokens = (path, keys) => {
+	return keys.reduce((memo, key) => {
+		return memo.replace('(?:([^\\/]+?))', `:${key.name}`);
+	}, path.toString());
+};
+
+const cleanRegEx = (path) => {
 	var out = String(path) || ''
 	out = out.replace(/\\\//g, '/'); // escaped slashes
 	out = out.replace(/\^\//g, ''); // beginning of route
@@ -46,7 +49,7 @@ export const AccquireRoute = (app, options   ) => {
 
 	for(let val of stack )
 	{
-		if(isUndefined(val, 'router') && (val.name === 'router') )
+		if(isUndefined(val, 'router') && (val.name === 'router' || val.name === 'bound dispatch') )
 		{
 			r_LayerHdl(val , r_routeInfoList , baseUrl + cleanRegEx(replaceTokens(val.regexp, val.keys))) ;
 		}
@@ -152,7 +155,7 @@ function ar_Hdl(len , itr , r_routeInfoObj, key)
 
 function fileWriteHdl(r_DataWrite)
 {
-	fs.writeFile("./Rog.md", mdTable(r_DataWrite), (Er)=>{
+	fs.writeFile("./Rpg.md", mdTable(r_DataWrite), (Er)=>{
 		if(Er )
 		{
 			console.log(Er)
