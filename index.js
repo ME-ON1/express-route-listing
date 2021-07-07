@@ -22,32 +22,20 @@ const QUERY_REGEX = "(?:\/([^\/]+?))"
 const PARAM_REGEX = "(?:([^\\/]+?))"
 
 const replaceTokens = (path, keys) => {
-	console.log(path , "replace tokens ", keys)
 	return keys.reduce((memo, key) => {
-		if(memo.indexOf("(?:([^\\/]+?))") >= 0 )
-		{
-			console.log(memo , "inside parma")
-			return memo.replace( "(?:([^\\/]+?))", `:${key.name}`)
-		}
-		else if(memo.indexOf("(?:\/([^\/]+?)") >= 0  )
-		{
-			console.log(memo, "insider query")
-			return memo.replace( "(?:\/([^\\/]+?))", `:${key.name}`)
-		}
+		return memo.replace('(?:([^\\/]+?))', `:${key.name}`);
 	}, path.toString());
-}
+};
 
 const cleanRegEx = (path) => {
-	console.log(path , "in the ro" )
 	var out = String(path) || ''
 	out = out.replace(/\\\//g, '/'); // escaped slashes
-		out = out.replace(/\^\//g, ''); // beginning of route
-			out = out.replace(/(\/\?\(\?\=\/\|\$\)\/\i)/, ''); // stack route end
-			if(out.match(/^\/\?\$\/\i$/)) out = '/';
-			else out = out.replace(/\/\?\$\/\i/, ''); // route end
-			console.log("after removing everytghi" , out )
-			return out;
-		};
+	out = out.replace(/\^\//g, ''); // beginning of route
+	out = out.replace(/(\/\?\(\?\=\/\|\$\)\/\i)/, ''); // stack route end
+	if(out.match(/^\/\?\$\/\i$/)) out = '/';
+	else out = out.replace(/\/\?\$\/\i/, ''); // route end
+	return out;
+};
 
 
 export const AccquireRoute = (app, options   ) => {
