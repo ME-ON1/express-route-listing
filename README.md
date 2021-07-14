@@ -1,36 +1,30 @@
-# express-route-listing
+# Express-route-listing
 
-express-route-listing is a package to log or write (Or Both) in file.
+Express-route-listing is a minimal, lightweight,  route logger package to log or write (Or Both) express APIs in a file, which helps in documenting the stuff for newer people who will/are contributing their efforts to your repo.
 
+Express-route-listing currently helps in logging PARAMS , METHODS , MIDDLEWARE AND PATH.
 
-Express-route-listing currently helps in logging PARAMS , METHODS , MIDDLEWARE AND ROUTE.
+It has option to `printToConsole` or `writeToFile`. To Show routes info in console.  Or show them into as md table in Route.md ( in the directory where package.json is present )
 
-Currently it has option to `printToConsole` or `writeToFile` or Both.
-All the route infomation is presented as a table in a md file ( with the help of markdownTable package as a sole dependencies  )
+Example :
 
-Currently due to supports ES6 modules
+## Using this package in ES6 module &nbsp;
 
+	import AccquireRoute from "./index.mjs" &nbsp;
+	const OPTIONS = { &nbsp;
+		printToConsole : BOOLEAN (default true ), &nbsp;
+		writeToFile : BOOLEAN (default false ) &nbsp;
+	} &nbsp;
+	AccquireRoute(app , { &nbsp;
+			OPTIONS &nbsp;
+			}) &nbsp;
 
-Example
-Using this package in ES6 module
-`
-	import AccquireRoute from "./index.mjs"
-	const OPTIONS = {
-		printToConsole : BOOLEAN (default true ),
-		writeToFile : BOOLEAN (default false )
-	}
-	AccquireRoute(app , {
-			OPTIONS
-			})
-`
+OR 
 
-OR
+## Using this package in CommonJS module
 
-Using this package in CommonJS module
-
-use dynamic importing
-
-`
+## use dynamic importing
+ 	
 	const modulePath = PATH
 	const OPTIONS = {
 		printToConsole : BOOLEAN, // (default true )
@@ -39,5 +33,4 @@ use dynamic importing
 	import(modulePath).then(routeLog => {
 		routeLog.AccquireRoute(app , OPTIONS)
 			})
-`
 
