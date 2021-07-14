@@ -18,20 +18,18 @@ const METHODS = {
 	put 	: 'PUT'
 }
 
-const QUERY_REGEX = "(?:/([]+?))"
+const QUERY_REGEX = "(?:\\/([]+?))"
 const PARAM_REGEX = "(?:([^\\/]+?))"
-
+// \/([^\/]+?))?
 const replaceTokens = (path, keys) => {
 	return keys.reduce((memo, key) => {
 		if(key.optional)
 		{
-			console.log(memo ,memo.indexOf("(?:\/([^\/]+?))") , "un query ") ;
-			return memo.replace(QUERY_REGEX, `:${key.name}`)
+			//console.log(memo.indexOf("(?:\\/([^\\/]+?))" ), memo , `/:${key.name}`)
+			return memo.replace("(?:\\/([^\\/]+?))", `/:${key.name}`)
 		}
 		else
 		{
-
-			console.log(memo ,memo.indexOf("(?:\/([^\/]+?))") , "un query ") ;
 			return memo.replace(PARAM_REGEX, `:${key.name}`);
 		}
 	}, path.toString());
@@ -48,11 +46,8 @@ const cleanRegEx = (path) => {
 };
 
 
-export const AccquireRoute = (app, options   ) => {
-	const {
-		writeToFile ,
-		printToConsole ,
-	} = options
+
+export const AccquireRoute = (app, {printToConsole = true , writeToFile = false } ) => {
 	const {stack} = app._router ;
 	let r_routeInfoList = [] ;
 	let baseUrl = ""
@@ -66,18 +61,18 @@ export const AccquireRoute = (app, options   ) => {
 
 	}
 
-	//if(typeof printToConsole === "boolean" && printToConsole )
-	//{
-		//console.log(util.inspect(r_routeInfoList , {showHidden : false , depth : null }))
-	//}else
-	//{
-		//throw new Error(`printToConsole needs to be Boolean , found to be ${typeof printToConsole} `)
-	//}
-	//if(typeof writeToFile === "boolean" && writeToFile)
-	//{
-		//const r_mdTableData = r_mdTableHdl(r_routeInfoList)
-		//fileWriteHdl(r_mdTableData)
-	//}
+	if(typeof printToConsole === "boolean" && printToConsole )
+	{
+		console.log(util.inspect(r_routeInfoList , {showHidden : false , depth : null }))
+	}else
+	{
+		throw new Error(`printToConsole needs to be Boolean , found to be ${typeof printToConsole} `)
+	}
+	if(typeof writeToFile === "boolean" && writeToFile)
+	{
+		const r_mdTableData = r_mdTableHdl(r_routeInfoList)
+		fileWriteHdl(r_mdTableData)
+	}
 }
 
 const r_LayerHdl = (r_ILog, r_routeInfoList , baseUrl) => {
@@ -167,7 +162,7 @@ function fileWriteHdl(r_DataWrite)
 	fs.writeFile("./Rpg.md", mdTable(r_DataWrite), (Er)=>{
 		if(Er )
 		{
-			console.log(Er)
+			//console.log(Er)
 			throw "Cannot write to the File"
 		}else
 		{
