@@ -8,7 +8,7 @@ It has option to `printToConsole` or `writeToFile`. To Show routes info in conso
 
 Example :
 
-## Using this package in ES6 module &nbsp;
+#### Using this package in ES6 module &nbsp;
 
 	import AccquireRoute from "./index.mjs" &nbsp;
 	const OPTIONS = { &nbsp;
@@ -19,12 +19,9 @@ Example :
 			OPTIONS &nbsp;
 			}) &nbsp;
 
-OR 
 
-## Using this package in CommonJS module
+#### Using this package in CommonJs Module ( [require dynamic importing](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import#dynamic_imports) )
 
-## use dynamic importing
- 	
 	const modulePath = PATH
 	const OPTIONS = {
 		printToConsole : BOOLEAN, // (default true )
