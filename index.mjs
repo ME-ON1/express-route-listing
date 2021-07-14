@@ -159,7 +159,7 @@ function ar_Hdl(len , itr , r_routeInfoObj, key)
 
 function fileWriteHdl(r_DataWrite)
 {
-	fs.writeFile("./Rpg.md", mdTable(r_DataWrite), (Er)=>{
+	fs.writeFile("./Route.md", mdTable(r_DataWrite), (Er)=>{
 		if(Er )
 		{
 			//console.log(Er)
