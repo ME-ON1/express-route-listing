@@ -1,15 +1,31 @@
 {
   "name": "express-route-logging",
-  "version": "1.0.0",
+  "version": "1.0.1",
+  "deprecated": false,
   "description": "A minimal express-route-logger that logs information about different routes, middlewares, method, params and query used in the express web-app",
   "main": "index.mjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": [
+	  "express",
+	  "route-logging",
+	  "API documentation",
+	  "express-route-logging",
+	  "express route logging",
+	  "log",
+	  "method log",
+	  "middleware log",
+	  "params log",
+	  "query log"
+  ],
   "author": "",
   "type": "module",
-  "license": "ISC",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ME-ON1/express-route-listing.git"
+  },
   "dependencies": {
     "markdown-table": "^3.0.1"
   },
