@@ -1,8 +1,8 @@
 {
-  "name": "route-log",
+  "name": "express-route-logging",
   "version": "1.0.0",
-  "description": "",
-  "main": "rotelog.js",
+  "description": "A minimal express-route-logger that logs information about different routes, middlewares, method, params and query used in the express web-app",
+  "main": "index.mjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -12,5 +12,8 @@
   "license": "ISC",
   "dependencies": {
     "markdown-table": "^3.0.1"
+  },
+  "devDependencies": {
+    "jest": "^27.0.6"
   }
 }
